@@ -1,50 +1,97 @@
-# Obsidian Sample Plugin
+# Running Summarizer Plugin
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+An Obsidian plugin that automatically summarizes your past work notes using LLM to help bootstrap your daily work memory.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## Features
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+- **Concise Action Lists**: Focuses only on incomplete work, ignoring finished tasks
+- **Smart Checkboxes**: Mark items complete with checkboxes - they'll be ignored in future summaries
+- **Weekend Gap Handling**: Automatically skips missing days (weekends) to find actual work notes
+- **Configurable Lookback**: Choose how many days to look back (1-8 days)
+- **LLM Integration**: Uses OpenAI or compatible APIs to generate contextual summaries
+- **Flexible Note Patterns**: Works with various daily note naming conventions
+- **Callout Integration**: Inserts summaries as attractive callouts at your cursor position
+- **Live Placeholder**: Shows a loading indicator while the AI generates your summary
+- **Recent Focus**: Identifies what you were last working on from your most recent notes
+- **Quick Suggestions**: Brief, actionable recommendations for tools and techniques
 
-## First time developing plugins?
+## How it Works
 
-Quick starting guide for new plugin devs:
+1. **Command Execution**: Run the "Generate work summary from past notes" command
+2. **Note Discovery**: The plugin looks for daily notes matching your configured date pattern
+3. **Placeholder Display**: Shows a loading indicator with progress information
+4. **Content Analysis**: Reads and analyzes the content of past notes
+5. **LLM Summarization**: Sends note content to your configured LLM for intelligent summarization
+6. **Summary Insertion**: Replaces the placeholder with the formatted summary callout
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+## Setup
 
-## Releasing new releases
+1. Install the plugin
+2. Configure your settings:
+   - **API Key**: Your OpenAI API key (or compatible service)
+   - **Days to Look Back**: How many past days to include (default: 5)
+   - **Note Pattern**: Date format for your daily notes (e.g., `YYYY-MM-DD`)
+   - **API URL**: LLM API endpoint (default: OpenAI)
+   - **Model**: Which model to use (default: `gpt-4.1-mini`)
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+## Usage
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+1. Open your current daily note
+2. Position your cursor where you want the summary
+3. Open Command Palette (`Ctrl/Cmd + P`)
+4. Run "Generate work summary from past notes"
+5. Wait for the LLM to generate your summary
+6. The summary will be inserted as a callout at your cursor position
 
-## Adding your plugin to the community plugin list
+## Example Output
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+```markdown
+> [!info] Work Summary (2024-01-15)
+> Generated from past 2 days of notes
+> 
+> **📋 OPEN ITEMS:**
+> - [ ] Finalize GraphQL schema design for user authentication
+> - [ ] Complete security review for payment module
+> - [ ] Investigate root cause of payment processing timeout
+> - [ ] Schedule Q2 roadmap planning meeting
+> - [ ] Set up performance testing environment
+> 
+> **🎯 LAST WORKING ON:** Payment processing timeout debugging on Friday
+> 
+> **💡 QUICK SUGGESTION:** Try distributed tracing (Jaeger) for payment debugging
+```
 
-## How to use
+### Weekend Gap Handling
+
+The plugin automatically handles missing days! If you set it to look back 2 days but it's Monday:
+- It will skip Saturday & Sunday (no notes)
+- Find Friday & Thursday notes instead
+- Always gets the requested number of actual work days
+
+### Using Checkboxes
+
+Once you complete an item, simply check the box:
+```markdown
+> **📋 OPEN ITEMS:**
+> - [x] Finalize GraphQL schema design for user authentication ✅ Done!
+> - [ ] Complete security review for payment module
+> - [ ] Investigate root cause of payment processing timeout
+```
+
+The plugin will automatically ignore checked items in future summaries, keeping your action list focused on what still needs attention.
+
+## Configuration
+
+### Note Pattern Examples
+- `YYYY-MM-DD` - matches notes like "2024-01-15"
+- `YYYY-MM-DD-dddd` - matches notes like "2024-01-15-Monday"
+- Custom patterns using moment.js format
+
+### Supported APIs
+- OpenAI (default)
+- Any OpenAI-compatible API (Anthropic Claude via proxy, local LLMs, etc.)
+
+## Development
 
 - Clone this repo.
 - Make sure your NodeJS is at least v16 (`node --version`).

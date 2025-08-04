@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "running-summarizer",
+	"name": "Running Summarizer",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Automatically summarizes past work notes using LLM to help bootstrap your daily work memory.",
+	"author": "tupini07",
+	"authorUrl": "",
 	"isDesktopOnly": false
 }
